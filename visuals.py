@@ -11,7 +11,7 @@ matplotlib.style.use('ggplot')
 plt.interactive(False)
 table = pd.DataFrame()
 subjects = ["Kiswahili", "English", "Maarifa", "Hisabati", "Science"]
-table = pd.read_csv('/Users/Muse/Documents/GitHub/ImportingNECTA/CompleteDatasets/necta_psle_2014.csv') #Use the directory with your combined data file
+table = pd.read_csv() #Use the directory with your combined data file
 
 plt.figure()
 
