@@ -13,12 +13,11 @@ path = r'' #Use your path to the directory with all CSVs
 allFiles = glob.glob(path + "/*.csv")
 frame = pd.DataFrame()
 csvs= []
-check = 0
 for file_ in allFiles:
-    df = pd.read_csv(file_, index_col=None, header=0)
-    if check==0:
-        column = df.columns
+    df = pd.read_csv(file_)
     csvs.append(df)
-frame = pd.concat(csvs, ignore_index=True)
-frame = frame.ix[:, column]
-frame.to_csv("") #Save to your preferred format, and directory.
+frame = pd.concat(csvs)
+frame.drop(["Unnamed: 0"], axis=1, inplace=True)
+frame['CalcAverage'] = (frame.Kiswahili + frame.English + frame.Maarifa + frame.Hisabati + frame.Science)/5
+frame.rename(columns={"Average Grade": "Average_Grade"}, inplace=True)
+frame.to_csv("", index=False) #Save to your preferred format, and directory.

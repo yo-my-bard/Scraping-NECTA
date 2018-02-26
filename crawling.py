@@ -15,7 +15,7 @@ from sqlstore import storeinDB
 
 """
 
-Because of how the URLs are, we need 3 ways of lengthening
+Because of how the URLs are, we need 2 ways of lengthening
 the links for each depth. As well as short/long procedures.
 
 """
@@ -31,14 +31,16 @@ def short_urls(link):
 def full_url(list):
     complete_url = []
     for e in list:
-        full = 'http://www.necta.go.tz/psle2013/'+e #Change this for the other years
+        full = 'http://www.necta.go.tz/results/2013/psle/'+e #Make links to crawl every region
+                                                            # Change this for the other years
         complete_url.append(full)
     return complete_url
 
 def full_url2(list):
     complete_url = []
     for e in list:
-        full = 'http://www.necta.go.tz/psle2013/results/'+e #Change this for the other years
+        full = 'http://www.necta.go.tz/results/2013/psle/results/'+e #Links to crawl every district, and every school
+                                                                     #Change this for the other years
         complete_url.append(full)
     return complete_url
 
@@ -105,7 +107,7 @@ Uncomment the code below to store in your database - be sure you configure store
 
 """
 
-# page = 'http://www.necta.go.tz/psle2013/psle.htm'
+# page = 'http://www.necta.go.tz/results/2013/psle/psle.htm'
 # list_of_urls = crawl_web(page)
 #
 # print("About to put this pup in the database. Hold my beer.")
