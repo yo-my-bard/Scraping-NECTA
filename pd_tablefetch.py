@@ -23,6 +23,23 @@ def getframe(list):
     for e in list:
         return e
 
+def deleteAsterisk(dataframe):
+    """
+    Discovered that some rows have specific asterisked cells. It took a while, but found some
+    error handling around it.
+
+    :param dataframe: Use dataframe that was crawled
+    :return: The same dataframe without the asterisked cells
+    """
+    find_index = 0
+    column = dataframe.loc[:, "SUBJECTS"]
+    for cell in column:
+        if "*" in cell:
+            dataframe.drop(dataframe.index[find_index], inplace=True)
+            find_index -=1
+        find_index += 1
+    return dataframe
+
 def merge_all(table_urls):
     """
     Merge all NECTA HTML tables into a single pandas dataframe.
@@ -39,15 +56,10 @@ def merge_all(table_urls):
     for i in table_urls:
         try:
             time.sleep(3)
-            table = pd.read_html(i, header=0)
-            a = getframe(table)
-            column = a.loc[:, "SUBJECTS"]
-            for cell in column:
-                #Discovered that some rows have specific asterisked cells. It took a while, but found some
-                #error handling around it. Without this, the merge fails and it won't tell you until hours later.
-                if "*" in cell:
-                    raise ValueError("This is an incomplete table, asterisk in grade values")
-            combo.append(a)
+            table = pd.read_html(i, header=0) #May have to tinker with indexing depending on structure of your url list
+            frame = getframe(table)
+            frame = deleteAsterisk(frame)
+            combo.append(frame)
             index += 1
             time.sleep(2)
         except Exception as e:
