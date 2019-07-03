@@ -108,3 +108,6 @@ ENV/
 
 #Databases
 *.db
+
+#VSCode
+*.vscode
