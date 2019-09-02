@@ -16,3 +16,8 @@ class PsleItem(scrapy.Item):
     district = scrapy.Field()
     school = scrapy.Field()
     is_error = scrapy.Field()
+
+class AcseeItem(scrapy.Item):
+    url = scrapy.Field()
+    is_error = scrapy.Field()
+    tables = scrapy.Field()
