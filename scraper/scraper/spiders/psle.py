@@ -12,8 +12,8 @@ class Psle(scrapy.Spider):
                         'AUTOTHROTTLE_ENABLED': True,
                         'FEED_URI': None,
                         'FEED_FORMAT': 'jsonlines',
-                        'ITEM_PIPELINES': {'scraper.pipelines.MakeDataFrame': 99,
-                                            'scraper.pipelines.JsonWriterPipeline': 100}}
+                        'ITEM_PIPELINES': {'scraper.pipelines.PsleMakeDataFrame': 99,
+                                            'scraper.pipelines.PsleJsonWriter': 100}}
                         #TODO: Safe support for persistence. Seems crawling links is random, so might be safer
                         #to filter out links based on what has already been exported to jsonlines file.
     school_regex = re.compile('/(?!.*/)(.*ps\d+.+)')

@@ -8,7 +8,7 @@ import json
 import pandas as pd
 import numpy as np
 
-class MakeDataFrame(object):
+class PsleMakeDataFrame(object):
     def process_item(self, item, spider):
         try:
             df = pd.read_html(item['tables'][0], header=0)[0]
@@ -67,7 +67,7 @@ class MakeDataFrame(object):
         data['Calculated_Average'] = (data.Kiswahili + data.English + data.Maarifa + data.Hisabati + data.Science)/5
         return data
 
-class JsonWriterPipeline(object):
+class PsleJsonWriter(object):
 
     def open_spider(self, spider):
         self.file = open(spider.custom_settings['FEED_URI'][7:], 'a')
