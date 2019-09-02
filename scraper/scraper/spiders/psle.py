@@ -4,8 +4,6 @@ import os
 import datetime as dt
 from functools import partial
 import scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
 from ..items import PsleItem
 
 class Psle(scrapy.Spider):
