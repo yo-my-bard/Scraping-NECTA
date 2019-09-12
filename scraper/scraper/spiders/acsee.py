@@ -40,6 +40,10 @@ class Acsee(scrapy.Spider):
                 #import pdb; pdb.set_trace() for breakpoint interactive debugging
                 text = anchor.xpath('text()').get().strip()
                 new_callback = partial(self.parse_results_page, exam_center=text)
+                
+                #For CSEE, 2016 oddly had backslashes in href, causing blunders
+                link = link.replace('\\', '/')
+
                 if not self.last_run:
                     yield response.follow(link, callback=new_callback, errback=self.errback)
                 else:
