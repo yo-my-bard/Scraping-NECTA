@@ -57,7 +57,8 @@ class Psle(scrapy.Spider):
     def parse_school_page(self, response, region, district, school):
         #All of these pages are static school pages with no links
         if self.school_regex.search(response.url):
-            yield PsleItem(url=response.url, status=response.status, tables=response.xpath('//table').getall(),
+            #https://stackoverflow.com/a/41862373 for more on XPATH usage of dot vs. text()
+            yield PsleItem(url=response.url, status=response.status, tables=response.xpath('//table[contains(., "CAND. NO")]').getall(),
             region=region, district=district, school=school, is_error=False)
     
     def errback(self, error):
