@@ -8,6 +8,7 @@ import json
 import pandas as pd
 import numpy as np
 import re
+from lxml import etree
 
 class PsleMakeDataFrame(object):
     def process_item(self, item, spider):
@@ -88,9 +89,10 @@ class AcseeMakeDataFrame(object):
         item['rankings_table'] = None
         item['div_performance_table'] = None
         item['subject_performance_table'] = None
+        root = etree.fromstring(item['html'], parser=etree.HTMLParser(encoding='utf8'))
 
         try:
-            alevel = pd.read_html(item['html'], header=0, flavor='bs4')[0]
+            alevel = pd.read_html(etree.tostring(root.xpath("//table[contains(., 'CNO')]")[0]), header=0, flavor='bs4')[0]
             #Listify the list of subject grades, grades for each row in Detailed Subjects column
             alevel.loc[:,"DETAILED SUBJECTS"] = alevel.loc[:,"DETAILED SUBJECTS"].apply(lambda x: self._list_subjects(x))
             #Split the grades and make columns for them
@@ -107,20 +109,19 @@ class AcseeMakeDataFrame(object):
         if item['exam_center'].lower()[0] != 'p': #Private exam centers don't have the meta-data tables.
             #Rankings Table
             try:
-                rankings_table = pd.read_html(item['html'], header=0, flavor='bs4')[2] #TODO: bug - pandas 0.24.2 throws IndexError without a non-Falsey header arg, 0.23.4 did not
-                first_row = [rankings_table.copy().columns.tolist()] #save the original first row
+                rankings_table = pd.read_html(etree.tostring(root.xpath("//table[contains(., 'EXAMINATION CENTRE REGION')]")[0]), 
+                                            header=None, flavor='bs4')[0] #TODO: bug - pandas 0.24.2 throws IndexError without a non-Falsey header arg, 0.23.4 did not
                 rankings_table.columns = ['category', 'rank'] #create new column names
-                new_rankings_table = pd.DataFrame(first_row, columns=rankings_table.columns).append(rankings_table) #Make a complete df
-                new_rankings_table.reset_index(drop=True, inplace=True) #Have to reset index so to_dict works properly
-                new_rankings_table.insert(0, 'exam_center', item['exam_center'])
-                item['rankings_table'] = new_rankings_table.to_dict()
+                rankings_table.reset_index(drop=True, inplace=True) #Have to reset index so to_dict works properly
+                rankings_table.insert(0, 'exam_center', item['exam_center'])
+                item['rankings_table'] = rankings_table.to_dict()
             except Exception as e:
                 item['errors'].append(('rankings_table', str(e)))
                 item['is_error'] = True
 
             #Division Performance Table
             try:
-                dev_perform_table = pd.read_html(item['html'], flavor='bs4', header=0)[4]
+                dev_perform_table = pd.read_html(etree.tostring(root.xpath("//table[contains(., 'REGIST')]")[0]), flavor='bs4', header=0)[0]
                 dev_perform_table.insert(0, 'exam_center', item['exam_center'])
                 item['div_performance_table'] = dev_perform_table.to_dict()
             except Exception as e:
@@ -129,7 +130,7 @@ class AcseeMakeDataFrame(object):
 
             #Subject Performance Table
             try:
-                subj_perform_table = pd.read_html(item['html'], flavor='bs4', header=0)[6]
+                subj_perform_table = pd.read_html(etree.tostring(root.xpath("//table[contains(., 'SUBJECT NAME')]")[0]), flavor='bs4', header=0)[0]
                 subj_perform_table.insert(0, 'exam_center', item['exam_center'])
                 item['subject_performance_table'] = subj_perform_table.to_dict()
             except Exception as e:
